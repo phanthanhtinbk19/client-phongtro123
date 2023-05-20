@@ -1,0 +1,140 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@layer components {
+	.container {
+		width: 1100px;
+	}
+}
+
+.pagination {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	gap: 6px;
+	color: gray;
+	margin-top: 20px;
+	& li {
+		display: inline-block;
+		a {
+			padding: 12px 14px;
+			color: #333;
+			text-decoration: none;
+			border-radius: 5px;
+			background-color: #fff;
+			border: 1px solid #f1f1f1;
+			font-size: 14px;
+			font-weight: 500;
+		}
+	}
+	& li.selected a {
+		background-color: #e13427;
+		border-color: #e13427;
+		color: #fff;
+	}
+}
+
+.swiper-button-prev {
+	left: 5px;
+	width: 50px;
+	height: 50px;
+	background: url("https://phongtro123.com/images/back-button-yellow.png")
+		center no-repeat;
+	background-size: 40px 40px;
+	margin-top: -40px;
+}
+
+.swiper-button-prev::after {
+	display: none;
+}
+
+.swiper-button-next {
+	right: 5px;
+	width: 50px;
+	height: 50px;
+	background: url("https://phongtro123.com/images/next-button-yellow.png")
+		center no-repeat;
+	background-size: 40px 40px;
+	margin-top: -40px;
+}
+
+.swiper-button-next::after {
+	display: none;
+}
+
+input[type="range"]::-webkit-slider-runnable-track {
+	-webkit-appearance: none;
+	height: 5px;
+}
+
+input[type="range"]::-moz-range-track {
+	-moz-appearance: none;
+	height: 5px;
+}
+
+input[type="range"]::-ms-track {
+	appearance: none;
+	height: 5px;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+	-webkit-appearance: none;
+	width: 2rem;
+	height: 2rem;
+	background-color: white;
+	border: solid 1px #ccc;
+	border-radius: 1rem;
+	margin-top: -0.6rem;
+	pointer-events: auto;
+	cursor: pointer;
+}
+
+input[type="range"]::-webkit-slider-thumb:active {
+	border: solid 1px rgb(144, 211, 255);
+}
+
+input[type="range"]::-moz-range-thumb {
+	-moz-appearance: none;
+	width: 2rem;
+	height: 2rem;
+	background-color: white;
+	border: solid 1px #ccc;
+	border-radius: 1rem;
+	margin-top: -0.6rem;
+	pointer-events: auto;
+	cursor: pointer;
+}
+
+input[type="range"]::-moz-range-thumb:active {
+	border: solid 1px rgb(144, 211, 255);
+}
+
+input[type="range"]::-ms-thumb {
+	appearance: none;
+	width: 2rem;
+	height: 2rem;
+	background-color: white;
+	border: solid 1px #ccc;
+	border-radius: 1rem;
+	margin-top: -0.6rem;
+	pointer-events: auto;
+	cursor: pointer;
+}
+
+input[type="range"]::-ms-thumb:active {
+	border: solid 1px rgb(144, 211, 255);
+}
+
+@keyframes slide-right {
+	0% {
+		-webkit-transform: translateX(0);
+		transform: translateX(0);
+	}
+	100% {
+		-webkit-transform: translateX(100px);
+		transform: translateX(100px);
+	}
+}
+.ql-editor {
+	min-height: 200px;
+}
