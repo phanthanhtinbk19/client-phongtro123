@@ -5,7 +5,8 @@ import {clearLS, getAccessTokenFromLS, setAccessTokenToLS} from "./auth";
 
 let accessToken = getAccessTokenFromLS() || "";
 const http = axios.create({
-	baseURL: "https://server-phongtro123.vercel.app/api/v1",
+	baseURL:
+		"https://server-phongtro123-7p0ipfriw-phanthanhtinbk19.vercel.app/api/v1",
 	// baseURL: "http://localhost:8080/api/v1",
 	timeout: 10000,
 	headers: {
