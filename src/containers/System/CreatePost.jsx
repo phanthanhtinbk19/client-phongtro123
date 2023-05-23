@@ -146,7 +146,6 @@ const CreatePost = () => {
 			"name",
 			"district"
 		);
-		console.log(newData);
 
 		// @ts-ignore
 		createNewPostMutation.mutate(newData, {

@@ -7,12 +7,24 @@ import {useMutation} from "@tanstack/react-query";
 import {MyInput} from "../../components";
 import path from "../../constants/path";
 import {useAuthentication} from "../../contexts/authContext";
+import {toast} from "react-toastify";
 const loginSchema = schema.pick(["phone", "password"]);
 const Login = () => {
 	const {setIsAuthenticated} = useAuthentication();
 	const navigate = useNavigate();
 	const loginAccountMutation = useMutation({
 		mutationFn: (data) => authApi.loginAccount(data),
+		onSuccess: (data) => {
+			if (data?.data?.err === 2) {
+				toast.error(data?.data?.message);
+			} else {
+				setIsAuthenticated(true);
+				navigate("/");
+			}
+		},
+		onError: (error) => {
+			console.log(error);
+		},
 	});
 
 	const {
@@ -28,12 +40,7 @@ const Login = () => {
 	});
 	const onSubmit = handleSubmit((data) => {
 		// @ts-ignore
-		loginAccountMutation.mutate(data, {
-			onSuccess: () => {
-				setIsAuthenticated(true);
-				navigate("/");
-			},
-		});
+		loginAccountMutation.mutate(data);
 	});
 	return (
 		<section className="bg-gray-50 w-full">
@@ -62,6 +69,7 @@ const Login = () => {
 								name="phone"
 								type="number"
 								id="phone"
+								className=""
 								errorMessage={errors.phone?.message}
 							/>
 							<MyInput
@@ -71,6 +79,7 @@ const Login = () => {
 								name="password"
 								id="password"
 								placeholder="••••••••"
+								className=""
 								errorMessage={errors.password?.message}
 							/>
 

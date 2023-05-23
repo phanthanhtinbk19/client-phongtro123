@@ -11,7 +11,6 @@ import slugify from "slugify";
 
 const SearchDetail = () => {
 	const location = useLocation();
-	console.log(location);
 
 	return (
 		<div className="container mx-auto">

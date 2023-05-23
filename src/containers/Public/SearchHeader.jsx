@@ -1,16 +1,19 @@
 /* eslint-disable no-mixed-spaces-and-tabs */
 import {useEffect, useState} from "react";
 import icons from "../../constants/icon";
-import {useQuery} from "@tanstack/react-query";
-import {areaApi, categoryApi, priceApi, provinceApi} from "../../api";
 import {ItemSearch} from "../../components";
 import useQueryConfig from "../../hook/useQueryConfig";
-import {Link, createSearchParams, useLocation} from "react-router-dom";
+import {
+	Link,
+	createSearchParams,
+	useLocation,
+	useParams,
+} from "react-router-dom";
 import {isUndefined, omitBy} from "lodash";
 import path from "../../constants/path";
 import {Modal} from "../../components";
 import slugify from "slugify";
-import {getNumbersPrice} from "../../utils/common";
+import {useApp} from "../../contexts/appContext";
 
 const {
 	BsBuilding,
@@ -22,42 +25,17 @@ const {
 	AiOutlineSearch,
 } = icons;
 const SearchHeader = () => {
+	const {category} = useParams();
 	const queryConfig = useQueryConfig();
+	const {prices, categories, areas, provinces, queries, setQueries} = useApp();
 	const location = useLocation();
-
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [content, setContent] = useState("");
 	const [name, setName] = useState("");
-	const [queries, setQueries] = useState({});
-	const [arrMinMax, setArrMinMax] = useState({});
-	const {data: provincesData} = useQuery({
-		queryKey: ["listProvince"],
-		queryFn: () => {
-			return provinceApi.getProvinces();
-		},
-	});
-	const {data: pricesData} = useQuery({
-		queryKey: ["listPrice"],
-		queryFn: () => {
-			return priceApi.getPrices();
-		},
-	});
-	const {data: areasData} = useQuery({
-		queryKey: ["listArea"],
-		queryFn: () => {
-			return areaApi.getAreas();
-		},
-	});
-	const {data: categoriesData} = useQuery({
-		queryKey: ["listCategory"],
-		queryFn: () => {
-			return categoryApi.getCategories();
-		},
-	});
-	const provinces = provincesData?.data?.data?.provinces;
-	const prices = pricesData?.data?.data?.prices;
-	const categories = categoriesData?.data?.data?.categories;
-	const areas = areasData?.data?.data?.areas;
+
+	const categoryItem = categories?.find(
+		(item) => slugify(item?.value.toLowerCase(), "-") === category
+	);
 
 	const handleShowModal = (content, name) => {
 		setContent(content);
@@ -65,84 +43,67 @@ const SearchHeader = () => {
 		setIsModalOpen(true);
 	};
 
-	const handleSubmit = (query, arrMaxMin) => {
+	const handleSubmit = (query) => {
 		setQueries({...queries, [name]: query});
-		setArrMinMax((prev) => ({...prev, ...arrMaxMin}));
 		setIsModalOpen(false);
 	};
 
 	useEffect(() => {
 		if (!location?.pathname.includes(path.SEARCH)) {
-			setArrMinMax({});
 			setQueries({});
 		}
-	}, [location]);
+		location?.state
+			? setQueries((prev) => ({...prev, ...location.state}))
+			: category &&
+			  setQueries((prev) => ({
+					...prev,
+					category: {
+						name: categoryItem?.value,
+						categoryCode: categoryItem?.code,
+					},
+			  }));
+	}, [category, categoryItem?.code, categoryItem?.value, location, setQueries]);
 
 	return (
 		<>
 			<div className="container  bg-[#febb02]  px-3 py-2 rounded-md mx-auto my-2">
 				<div className="grid grid-cols-5 gap-2">
-					<button
+					<ItemSearch
+						defaultText="Tất cả danh mục"
+						text={queries["category"]?.name}
+						BeforeIcon={BsBuilding}
+						AfterIcon={RiDeleteBack2Line}
+						name="category"
+						setQueries={setQueries}
 						onClick={() => handleShowModal(categories, "category")}
-						className=" p-2  rounded-md flex items-center bg-white"
-					>
-						<ItemSearch
-							defaultText="Tất cả danh mục"
-							text={
-								queries["category"]?.name || location?.state?.category?.name
-							}
-							BeforeIcon={BsBuilding}
-							AfterIcon={RiDeleteBack2Line}
-							name="category"
-							setQueries={setQueries}
-						/>
-					</button>
-					<button
+					/>
+					<ItemSearch
+						defaultText="Toàn quốc"
+						text={queries["province"]?.name}
+						BeforeIcon={CiLocationOn}
+						AfterIcon={queries["province"] ? RiDeleteBack2Line : BiChevronRight}
+						name="province"
+						setQueries={setQueries}
 						onClick={() => handleShowModal(provinces, "province")}
-						className=" p-2 rounded-md flex items-center bg-white"
-					>
-						<ItemSearch
-							defaultText="Toàn quốc"
-							text={queries["province"]?.name}
-							BeforeIcon={CiLocationOn}
-							AfterIcon={
-								queries["province"] ? RiDeleteBack2Line : BiChevronRight
-							}
-							name="province"
-							setQueries={setQueries}
-						/>
-					</button>
-					<button
+					/>
+					<ItemSearch
+						defaultText="Chọn giá"
+						text={queries["price"]?.priceCode}
+						BeforeIcon={IoPricetagOutline}
+						AfterIcon={queries["price"] ? RiDeleteBack2Line : BiChevronRight}
+						name="price"
+						setQueries={setQueries}
 						onClick={() => handleShowModal(prices, "price")}
-						className=" p-2  rounded-md flex items-center bg-white"
-					>
-						<ItemSearch
-							defaultText="Chọn giá"
-							text={
-								queries["price"]?.priceCode || location?.state?.price?.priceCode
-							}
-							BeforeIcon={IoPricetagOutline}
-							AfterIcon={queries["price"] ? RiDeleteBack2Line : BiChevronRight}
-							name="price"
-							setQueries={setQueries}
-						/>
-					</button>
-					<button
+					/>
+					<ItemSearch
+						defaultText="Chọn diện tích"
+						text={queries["area"]?.areaCode || location?.state?.price?.areaCode}
+						BeforeIcon={BiArea}
+						AfterIcon={queries["area"] ? RiDeleteBack2Line : BiChevronRight}
+						name="area"
+						setQueries={setQueries}
 						onClick={() => handleShowModal(areas, "area")}
-						className=" p-2  rounded-md flex items-center bg-white"
-					>
-						<ItemSearch
-							defaultText="Chọn diện tích"
-							text={
-								queries["area"]?.areaCode || location?.state?.price?.areaCode
-							}
-							BeforeIcon={BiArea}
-							AfterIcon={queries["area"] ? RiDeleteBack2Line : BiChevronRight}
-							name="area"
-							setQueries={setQueries}
-						/>
-					</button>
-
+					/>
 					<Link
 						to={{
 							pathname: `/${path.SEARCH}/${slugify(
@@ -162,7 +123,6 @@ const SearchHeader = () => {
 								)
 							).toString(),
 						}}
-						// Object.keys(queries).length !== 0
 						state={{...queries}}
 						className={`p-2  rounded-md flex gap-1 items-center justify-center bg-primary `}
 					>
@@ -178,7 +138,7 @@ const SearchHeader = () => {
 					name={name}
 					handleSubmit={handleSubmit}
 					queries={queries}
-					arrMinMax={arrMinMax}
+					queryConfig={queryConfig}
 				/>
 			)}
 		</>

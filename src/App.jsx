@@ -9,6 +9,8 @@ import {CreatePost, System} from "./containers/System";
 import ManagePost from "./containers/System/ManagePost";
 import Contact from "./containers/Public/Contact";
 import ManageProfile from "./containers/System/ManageProfile";
+import SavedPost from "./containers/Public/SavedPost";
+import UpdatePost from "./containers/System/UpdatePost";
 
 function App() {
 	return (
@@ -25,9 +27,11 @@ function App() {
 						element={<SearchDetail />}
 					/>
 					<Route path={path.CONTACT} element={<Contact />} />
+					<Route path={path.SAVED_POST} element={<SavedPost />} />
 				</Route>
 				<Route path={path.SYSTEM} element={<System />}>
 					<Route path={path.CREATE_POST} element={<CreatePost />} />
+					<Route path={path.UPDATE_POST} element={<UpdatePost />} />
 					<Route path={path.MANAGE_POST} element={<ManagePost />} />
 					<Route path={path.MANAGE_PROFILE} element={<ManageProfile />} />
 				</Route>

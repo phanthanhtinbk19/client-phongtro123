@@ -1,5 +1,18 @@
 import {getNumbersArea, getNumbersPrice} from "./common";
+const getCodeArrPrice = (prices, arr) => {
+	const codePrices = prices?.map((item) => {
+		return {
+			...item,
+			rangePrice: getRangePrice(getNumbersPrice(item?.value)),
+		};
+	});
 
+	const result = codePrices?.find((item) => {
+		return JSON.stringify(item?.rangePrice) === JSON.stringify(arr);
+	});
+
+	return result;
+};
 const getCodePrice = (prices, value) => {
 	const codePrices = prices?.map((item) => {
 		return {
@@ -45,4 +58,4 @@ const getRangeArea = (data) => {
 	}
 };
 
-export {getCodePrice, getCodeArea};
+export {getCodePrice, getCodeArea, getCodeArrPrice};

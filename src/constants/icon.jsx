@@ -16,15 +16,24 @@ import {
 } from "react-icons/bs";
 import {CiLocationOn} from "react-icons/ci";
 import {RiDeleteBack2Line} from "react-icons/ri";
-import {BiChevronRight, BiArea, BiHash, BiUserPin} from "react-icons/bi";
+import {
+	BiChevronRight,
+	BiArea,
+	BiHash,
+	BiUserPin,
+	BiEdit,
+} from "react-icons/bi";
 import {IoPricetagOutline, IoCropSharp} from "react-icons/io5";
 import {ImPencil2} from "react-icons/im";
 import {MdOutlineLibraryBooks} from "react-icons/md";
 import {RxDashboard} from "react-icons/rx";
 import {ImBin} from "react-icons/im";
-import {FcContacts} from "react-icons/fc";
-
+import {FcContacts, FcFullTrash} from "react-icons/fc";
+import {FaTrash} from "react-icons/fa";
 const icons = {
+	FaTrash,
+	BiEdit,
+	FcFullTrash,
 	FcContacts,
 	ImBin,
 	RxDashboard,

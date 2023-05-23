@@ -138,3 +138,10 @@ input[type="range"]::-ms-thumb:active {
 .ql-editor {
 	min-height: 200px;
 }
+.swiper-pagination {
+	color: #fff;
+	font-weight: 400;
+}
+.column {
+	width: calc(100% / 8);
+}

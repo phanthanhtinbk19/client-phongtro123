@@ -97,8 +97,16 @@ const provinceLocation = (category) => {
 		];
 	}
 };
-
+const isValidJSON = (jsonString) => {
+	try {
+		JSON.parse(jsonString);
+		return true;
+	} catch (error) {
+		return false;
+	}
+};
 export {
+	isValidJSON,
 	extractLocation,
 	getNumbersPrice,
 	getNumbersArea,

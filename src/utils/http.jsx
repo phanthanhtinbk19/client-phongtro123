@@ -1,17 +1,12 @@
 import axios from "axios";
 import HttpStatusCode from "../constants/httpStatusCode";
 import {toast} from "react-toastify";
-import {
-	clearLS,
-	getAccessTokenFromLS,
-	setAccessTokenToLS,
-	setProfileToLS,
-} from "./auth";
+import {clearLS, getAccessTokenFromLS, setAccessTokenToLS} from "./auth";
 
 let accessToken = getAccessTokenFromLS() || "";
 const http = axios.create({
 	// baseURL: "https://be-shopee-clone-ofp5la5qj-phanthanhtinbk19.vercel.app/api",
-	baseURL: "http://localhost:8080/api/v1",
+	baseURL: "https://server-phongtro123.vercel.app/api/v1",
 	timeout: 10000,
 	headers: {
 		"Content-Type": "application/json",

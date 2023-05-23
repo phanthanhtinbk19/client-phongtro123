@@ -1,12 +1,20 @@
-import {logo} from "../../assets";
+import {logo, logout} from "../../assets";
 import icons from "../../constants/icon";
 import path from "../../constants/path";
 import {Button, Navigation, User} from "../../components";
-import {Link, createSearchParams} from "react-router-dom";
+import {
+	Link,
+	createSearchParams,
+	useLocation,
+	useNavigate,
+	useParams,
+} from "react-router-dom";
 import SearchHeader from "../../containers/Public/SearchHeader";
-import {Fragment, useState} from "react";
+import {Fragment, useEffect, useRef, useState} from "react";
 import menuManage from "../../utils/menuManage";
 import {useAuthentication} from "../../contexts/authContext";
+import {authApi} from "../../api";
+import {useMutation} from "@tanstack/react-query";
 
 const {
 	AiOutlineHeart,
@@ -15,9 +23,38 @@ const {
 	AiOutlineUserAdd,
 	AiOutlineLogin,
 } = icons;
+
 const Header = () => {
+	const location = useLocation();
+	const navigate = useNavigate();
+	const ref = useRef();
 	const [showMenu, setShowMenu] = useState(false);
-	const {isAuthenticated} = useAuthentication();
+	const {isAuthenticated, setIsAuthenticated} = useAuthentication();
+	const logoutAccountMutation = useMutation({
+		mutationFn: () => authApi.logoutAccount(),
+		onSuccess: () => {
+			setShowMenu(false);
+			setIsAuthenticated(false);
+			navigate("/");
+		},
+	});
+	const handleLogout = () => {
+		logoutAccountMutation.mutate();
+	};
+
+	useEffect(() => {
+		const checkIfClickedOutside = (e) => {
+			// @ts-ignore
+			if (ref.current && !ref.current.contains(e.target)) {
+				setShowMenu(false);
+			}
+		};
+		document.addEventListener("click", checkIfClickedOutside);
+		return () => {
+			document.removeEventListener("click", checkIfClickedOutside);
+		};
+	}, [showMenu]);
+
 	return (
 		<div className="">
 			<div className="flex justify-between items-center h-[70px] container m-auto">
@@ -32,9 +69,11 @@ const Header = () => {
 				</Link>
 
 				<div className="flex justify-center items-center">
-					<div className="pr-10">
-						<User />
-					</div>
+					{isAuthenticated && (
+						<div className="pr-10">
+							<User />
+						</div>
+					)}
 					<Button
 						to={path.like}
 						BeforeIcon={AiOutlineHeart}
@@ -45,7 +84,7 @@ const Header = () => {
 						<span> Yêu thích </span>
 					</Button>
 					{isAuthenticated ? (
-						<div className="relative">
+						<div className="relative" ref={ref}>
 							<Button
 								BeforeIcon={RxDashboard}
 								className="hover:underline"
@@ -81,11 +120,24 @@ const Header = () => {
 											</Link>
 										</li>
 									))}
+									<button
+										className="flex items-center gap-2 py-2"
+										onClick={handleLogout}
+									>
+										<span>
+											<img
+												src={logout}
+												className="w-4 h-4 object-contain"
+												alt=""
+											/>
+										</span>
+										<span>Đăng xuất</span>
+									</button>
 								</ul>
 							)}
 						</div>
 					) : (
-						<div>
+						<div className="flex items-center ">
 							<Button
 								to={path.login}
 								BeforeIcon={AiOutlineUserAdd}
@@ -118,7 +170,9 @@ const Header = () => {
 				</div>
 			</div>
 			<Navigation />
-			<SearchHeader />
+			{!location?.pathname.includes(path.login || path.register) && (
+				<SearchHeader />
+			)}
 		</div>
 	);
 };

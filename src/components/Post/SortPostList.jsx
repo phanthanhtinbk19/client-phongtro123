@@ -1,6 +1,5 @@
 import {Link, createSearchParams} from "react-router-dom";
 import {orderBy} from "../../constants/post";
-
 const SortPostList = ({queryConfig}) => {
 	const {order_by = orderBy.default} = queryConfig;
 	const isActiveOrderBy = (orderByValue) => {
@@ -36,20 +35,6 @@ const SortPostList = ({queryConfig}) => {
 				}}
 			>
 				Mới nhất
-			</Link>
-			<Link
-				className={`text-sm bg-gray-100 py-2 px-4 rounded-md ${
-					isActiveOrderBy("video") ? "underline" : ""
-				}`}
-				to={{
-					pathname: "/",
-					search: createSearchParams({
-						...queryConfig,
-						order_by: orderBy.video,
-					}).toString(),
-				}}
-			>
-				Có video
 			</Link>
 		</div>
 	);

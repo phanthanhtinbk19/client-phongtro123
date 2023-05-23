@@ -8,6 +8,7 @@ import {useQuery} from "@tanstack/react-query";
 import {Link, useParams} from "react-router-dom";
 import icons from "../../constants/icon";
 import ItemNewPostSideBar from "../../components/SideBar/ItemNewPostSideBar";
+import {isValidJSON} from "../../utils/common";
 
 const {
 	AiFillStar,
@@ -26,7 +27,9 @@ const DetailPost = () => {
 		queryFn: () => {
 			return postApi.getSinglePost(postId);
 		},
+		enabled: !!postId,
 	});
+
 	const singlePost = postData?.data?.data?.post;
 
 	return (
@@ -61,11 +64,10 @@ const DetailPost = () => {
 								className=" text-2xl  font-bold text-secondary mb-4 block"
 							>
 								<span className="inline-flex pr-1 text-yellow-400">
-									<AiFillStar size={20} />
-									<AiFillStar size={20} />
-									<AiFillStar size={20} />
-									<AiFillStar size={20} />
-									<AiFillStar size={20} />
+									{singlePost?.star &&
+										new Array(+singlePost?.star).fill(0).map((item, index) => {
+											return <AiFillStar key={index} size={20} />;
+										})}
 								</span>
 								{singlePost?.title}
 							</Link>
@@ -112,13 +114,21 @@ const DetailPost = () => {
 							<div>
 								<h2 className="text-lg font-bold">Thông tin mô tả</h2>
 							</div>
+
 							<div>
-								{singlePost &&
+								{singlePost?.description &&
+								isValidJSON(singlePost.description) ? (
 									JSON.parse(singlePost?.description).map((item, index) => (
 										<p key={index} className="py-1">
 											{item}
 										</p>
-									))}
+									))
+								) : (
+									<p
+										dangerouslySetInnerHTML={{__html: singlePost?.description}}
+										className="line-clamp-3 font-medium text-sm text-gray-500"
+									></p>
+								)}
 							</div>
 						</section>
 						<section className="mb-5">
@@ -171,14 +181,16 @@ const DetailPost = () => {
 										<div className="flex items-center">
 											<div className="w-[200px]">Ngày đăng:</div>
 											<div className="flex-1">
-												{singlePost?.attributes?.published}
+												{singlePost?.overviews?.created}
 											</div>
 										</div>
 									</div>
 									<div className="block bg-white px-6 py-3">
 										<div className="flex items-center">
 											<div className="w-[200px]">Ngày hết hạn:</div>
-											<div className="flex-1">qqqqqqqqqqq</div>
+											<div className="flex-1">
+												{singlePost?.overviews?.expired}
+											</div>
 										</div>
 									</div>
 								</div>

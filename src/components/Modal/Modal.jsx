@@ -9,24 +9,52 @@ import {
 	getNumbersPrice,
 } from "../../utils/common";
 import icons from "../../constants/icon";
+import {getCodeArrPrice} from "../../utils/getCodes";
 const {BsArrowLeft} = icons;
-const Modal = ({content, name, onClose, handleSubmit, queries, arrMinMax}) => {
+const Modal = ({
+	content,
+	name,
+	onClose,
+	handleSubmit,
+	queries,
+	queryConfig,
+}) => {
 	const [persent1, setPersent1] = useState(
-		name === "price" && arrMinMax?.priceArr
-			? arrMinMax?.priceArr[0]
-			: name === "area" && arrMinMax?.areaArr
-			? arrMinMax?.areaArr[0]
+		name === "price" && (queryConfig?.priceTo || queries?.price?.priceNumber[0])
+			? convertto100(
+					queryConfig?.priceTo || queries?.price?.priceNumber[0],
+					name
+			  )
+			: name === "area" && (queryConfig?.areaTo || queries?.area?.areaNumber[0])
+			? convertto100(queryConfig?.areaTo || queries?.area?.areaNumber[0], name)
 			: 0
 	);
 	const [persent2, setPersent2] = useState(
-		name === "price" && arrMinMax?.priceArr
-			? arrMinMax?.priceArr[1]
-			: name === "area" && arrMinMax?.areaArr
-			? arrMinMax?.areaArr[1]
+		name === "price" &&
+			(queryConfig?.priceFrom || queries?.price?.priceNumber[1])
+			? convertto100(
+					queryConfig?.priceFrom || queries?.price?.priceNumber[1],
+					name
+			  )
+			: name === "area" &&
+			  (queryConfig?.areaFrom || queries?.area?.areaNumber[1])
+			? convertto100(
+					queryConfig?.areaFrom || queries?.area?.areaNumber[1],
+					name
+			  )
 			: 100
 	);
 	const [activedEl, setActivedEl] = useState("");
 	useEffect(() => {
+		let min = persent1 <= persent2 ? persent1 : persent2;
+		let max = persent1 <= persent2 ? persent2 : persent1;
+		const code = getCodeArrPrice(content, [
+			convert100toTarget(min, name),
+			convert100toTarget(max, name),
+		])?.code;
+
+		setActivedEl(code || "");
+
 		const activedTrackEl = document.getElementById("track-active");
 		if (activedTrackEl) {
 			if (persent2 <= persent1) {
@@ -37,7 +65,7 @@ const Modal = ({content, name, onClose, handleSubmit, queries, arrMinMax}) => {
 				activedTrackEl.style.right = `${100 - persent2}%`;
 			}
 		}
-	}, [persent1, persent2]);
+	}, [content, name, persent1, persent2]);
 	const handleClickTrack = (e, value) => {
 		const stackEl = document.getElementById("track");
 		const stackRect = stackEl.getBoundingClientRect();
@@ -78,25 +106,19 @@ const Modal = ({content, name, onClose, handleSubmit, queries, arrMinMax}) => {
 	const handleBeforeSubmit = () => {
 		let min = persent1 <= persent2 ? persent1 : persent2;
 		let max = persent1 <= persent2 ? persent2 : persent1;
-
 		let arrMinMax = [
 			convert100toTarget(min, name),
 			convert100toTarget(max, name),
 		];
-		handleSubmit(
-			{
-				[`${name}Number`]: arrMinMax,
-				[`${name}Code`]: `Từ ${convert100toTarget(
-					min,
-					name
-				)} - ${convert100toTarget(max, name)} ${
-					name === "price" ? "triệu" : "m2"
-				}`,
-			},
-			{
-				[`${name}Arr`]: [min, max],
-			}
-		);
+		handleSubmit({
+			[`${name}Number`]: arrMinMax,
+			[`${name}Code`]: `Từ ${convert100toTarget(
+				min,
+				name
+			)} - ${convert100toTarget(max, name)} ${
+				name === "price" ? "triệu" : "m2"
+			}`,
+		});
 	};
 
 	return ReactDOM.createPortal(
@@ -127,39 +149,24 @@ const Modal = ({content, name, onClose, handleSubmit, queries, arrMinMax}) => {
 					</div>
 					{(name === "category" || name === "province") && (
 						<div className="px-10">
-							{name === "province" ? (
-								<div className="flex items-center py-4 border-b">
-									<input
-										id="default-radio-1"
-										type="radio"
-										value="all"
-										name="default-radio"
-										className="w-4 h-4 text-blue-600 "
-									/>
-									<label
-										htmlFor="default-radio-1"
-										className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-									>
-										Toàn quốc
-									</label>
-								</div>
-							) : (
-								<div className="flex items-center py-4 border-b">
-									<input
-										id="default-radio-1"
-										type="radio"
-										value="all"
-										name="default-radio"
-										className="w-4 h-4 text-blue-600 "
-									/>
-									<label
-										htmlFor="default-radio-1"
-										className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-									>
-										Tất cả danh mục
-									</label>
-								</div>
-							)}
+							<div className="flex items-center py-4 border-b">
+								<input
+									id="default-radio-1"
+									type="radio"
+									value="all"
+									name="default-radio"
+									className="w-4 h-4 text-blue-600 "
+									checked={!queries[name]?.[`${name}Code`]}
+									onChange={() => {}}
+								/>
+								<label
+									htmlFor="default-radio-1"
+									className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+								>
+									{name === "category" ? "Tất cả danh mục" : "Toàn quốc"}
+								</label>
+							</div>
+
 							{content?.map((item, index) => (
 								<div key={index} className="flex items-center py-4 border-b">
 									<input
@@ -261,7 +268,7 @@ const Modal = ({content, name, onClose, handleSubmit, queries, arrMinMax}) => {
 							</div>
 							<div className="mt-24">
 								<h4 className="font-medium mb-4">Chọn nhanh:</h4>
-								<div className="grid grid-cols-4 gap-2 items-center">
+								<div className="grid grid-cols-4 gap-4 items-center">
 									{_.sortBy(content, [
 										function (o) {
 											return o.order;
@@ -271,7 +278,11 @@ const Modal = ({content, name, onClose, handleSubmit, queries, arrMinMax}) => {
 											<button
 												key={item.code}
 												onClick={() => handleActive(item.code, item.value)}
-												className={`text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-cyan-300  font-medium rounded-lg text-sm px-4 py-2.5 text-center mr-2 mb-2 col-span-1 }`}
+												className={`rounded-full text-sm font-medium py-3 px-5 text-center ${
+													activedEl === item.code
+														? "text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl"
+														: " text-gray-900 focus:outline-none bg-gray-50  border border-gray-200 hover:bg-gray-100 hover:text-blue-700  "
+												}`}
 											>
 												{name === "price" ? item.value : item.value}
 											</button>

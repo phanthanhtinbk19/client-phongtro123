@@ -6,4 +6,7 @@ const registerAccount = (data) => {
 const loginAccount = (data) => {
 	return http.post("/auth/login", data);
 };
-export {registerAccount, loginAccount};
+const logoutAccount = () => {
+	return http.post("/auth/logout");
+};
+export {registerAccount, loginAccount, logoutAccount};

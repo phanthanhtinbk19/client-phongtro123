@@ -1,16 +1,9 @@
-import {useQuery} from "@tanstack/react-query";
 import moment from "moment/moment";
 import {Link} from "react-router-dom";
-import {postApi} from "../../api";
+import {useApp} from "../../contexts/appContext";
 
 const ItemNewPostSideBar = () => {
-	const {data: newPostsData} = useQuery({
-		queryKey: ["newPostList"],
-		queryFn: () => {
-			return postApi.getNewPosts();
-		},
-	});
-	const newPosts = newPostsData?.data?.data?.posts;
+	const {newPosts} = useApp();
 	return (
 		<div className="rounded-lg bg-white border border-slate-300 p-5 my-5">
 			<h2 className="text-lg font-bold">Tin mới đăng</h2>

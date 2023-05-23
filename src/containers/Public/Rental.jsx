@@ -1,4 +1,4 @@
-import {Link, useLocation} from "react-router-dom";
+import {Link, useParams} from "react-router-dom";
 import PostList from "../../components/Post/PostList";
 import path from "../../constants/path";
 import icons from "../../constants/icon";
@@ -6,11 +6,16 @@ import {provinceLocation} from "../../utils/common";
 import ItemPriceSideBar from "../../components/SideBar/ItemPriceSideBar";
 import ItemAreaSideBar from "../../components/SideBar/ItemAreaSideBar";
 import ItemNewPostSideBar from "../../components/SideBar/ItemNewPostSideBar";
+import {useApp} from "../../contexts/appContext";
+import slugify from "slugify";
 const {BiChevronRight} = icons;
 const Rental = () => {
-	const location = useLocation();
-	const category = location.state?.category;
-	console.log(location);
+	const {category} = useParams();
+	const {categories} = useApp();
+
+	const categoryItem = categories?.find(
+		(item) => slugify(item?.value.toLowerCase(), "-") === category
+	);
 
 	return (
 		<div className="container mx-auto">
@@ -22,17 +27,17 @@ const Rental = () => {
 					<BiChevronRight size={20} className="text-gray-600" />
 				</span>
 				<Link className="text-sm text-primary" to={path.CHO_THUE_PHONG_TRO}>
-					{category?.value}
+					{categoryItem?.value}
 				</Link>
 			</div>
 			<div className="mb-5">
-				<h1 className="text-[28px] font-bold">{category?.header}</h1>
+				<h1 className="text-[28px] font-bold">{categoryItem?.header}</h1>
 				<p className="text-sm text-gray-600 font-medium">
-					{category?.subheader}
+					{categoryItem?.subheader}
 				</p>
 			</div>
 			<div className="flex items-center gap-5 justify-center mb-5">
-				{provinceLocation(category?.code)?.map((item, index) => (
+				{provinceLocation(categoryItem?.code)?.map((item, index) => (
 					<div
 						key={index}
 						className="w-[190px] h-[150px] bg-white border border-gray-200 rounded-lg shadow text-primary  hover:text-secondary cursor-pointer"
@@ -54,7 +59,7 @@ const Rental = () => {
 			</div>
 			<div className="grid grid-cols-12 gap-5 ">
 				<div className="col-span-8 ">
-					<PostList categoryCode={category?.code} />
+					<PostList categoryCode={categoryItem?.code} />
 				</div>
 				<div className="col-span-4">
 					<ItemPriceSideBar />

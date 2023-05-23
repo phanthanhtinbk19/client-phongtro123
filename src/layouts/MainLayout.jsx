@@ -25,7 +25,6 @@ const MainLayout = () => {
 			<div ref={refScrollUp}> </div>
 			<GoTop showGoTop={showGoTop} scrollUp={handleScrollUp} />
 			<Header />
-
 			<Outlet />
 			<Footer />
 		</div>

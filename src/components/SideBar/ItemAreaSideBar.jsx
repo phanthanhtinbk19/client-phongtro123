@@ -1,19 +1,12 @@
 import {Link, createSearchParams, useParams} from "react-router-dom";
 import icons from "../../constants/icon";
 import useQueryConfig from "../../hook/useQueryConfig";
-import {useQuery} from "@tanstack/react-query";
-import {areaApi} from "../../api";
+import {useApp} from "../../contexts/appContext";
 const {BiChevronRight} = icons;
 const ItemAreaSideBar = () => {
 	const {category} = useParams();
 	const queryConfig = useQueryConfig();
-	const {data: areasData} = useQuery({
-		queryKey: ["listArea"],
-		queryFn: () => {
-			return areaApi.getAreas();
-		},
-	});
-	const areas = areasData?.data?.data?.areas;
+	const {areas} = useApp();
 	return (
 		<div className="rounded-lg bg-white border border-slate-300 p-5 mb-5">
 			<h2 className="text-lg font-bold">Xem theo diện tích</h2>
@@ -22,7 +15,7 @@ const ItemAreaSideBar = () => {
 					<div key={index} className="col-span-1  border-b border-slate-100  ">
 						<Link
 							to={{
-								pathname: `/${category}`,
+								pathname: `/${category || ""}`,
 								search: createSearchParams({
 									...queryConfig,
 									areaCode: item.code,

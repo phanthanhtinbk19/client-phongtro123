@@ -1,12 +1,13 @@
 import {Link} from "react-router-dom";
 import icons from "../../constants/icon";
-import {extractLocation} from "../../utils/common";
+import {extractLocation, isValidJSON} from "../../utils/common";
 import {useState} from "react";
 import moment from "moment";
 const {AiFillStar, AiOutlineHeart, AiFillHeart} = icons;
 
 const PostItem = ({post}) => {
 	const [like, setLike] = useState(false);
+
 	return (
 		<div className="bg-[#fff9f3] p-5 border-t border-red-500">
 			<div className="grid grid-cols-12 gap-5 items-start">
@@ -44,11 +45,9 @@ const PostItem = ({post}) => {
 							className="line-clamp-2 text-lg font-bold text-secondary"
 						>
 							<span className="inline-flex pr-1 text-yellow-400">
-								<AiFillStar size={15} />
-								<AiFillStar size={15} />
-								<AiFillStar size={15} />
-								<AiFillStar size={15} />
-								<AiFillStar size={15} />
+								{new Array(+post?.star).fill(0).map((item, index) => {
+									return <AiFillStar key={index} size={15} />;
+								})}
 							</span>
 							{post?.title}
 						</Link>
@@ -69,9 +68,17 @@ const PostItem = ({post}) => {
 								{moment(post?.createdAt).fromNow()}
 							</span>
 						</div>
-						<p className="line-clamp-3 font-medium text-sm text-gray-500">
-							{JSON.parse(post?.description)}
-						</p>
+						{post?.description && isValidJSON(post.description) ? (
+							<p className="line-clamp-3 font-medium text-sm text-gray-500">
+								{JSON.parse(post.description)}
+							</p>
+						) : (
+							<p
+								dangerouslySetInnerHTML={{__html: post?.description}}
+								className="line-clamp-3 font-medium text-sm text-gray-500"
+							></p>
+						)}
+
 						<div className="flex justify-between mt-4">
 							<div className="flex items-center gap-2 flex-1">
 								<img

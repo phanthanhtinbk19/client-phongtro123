@@ -1,24 +1,14 @@
-import {useQuery} from "@tanstack/react-query";
-import {Link, NavLink, useLocation} from "react-router-dom";
-import {categoryApi} from "../../api";
+import {NavLink, useLocation} from "react-router-dom";
 import slugify from "slugify";
 import path from "../../constants/path";
+import {useApp} from "../../contexts/appContext";
 
+const navLinkStyle = ({isActive}) => ({
+	backgroundColor: isActive ? "#f73859" : "",
+});
 const Navigation = () => {
-	const navLinkStyle = ({isActive}) => ({
-		backgroundColor: isActive ? "#f73859" : "",
-	});
+	const {categories} = useApp();
 	const location = useLocation();
-
-	const category = location.state?.category;
-
-	const {data: categoriesData} = useQuery({
-		queryKey: ["listCategory"],
-		queryFn: () => {
-			return categoryApi.getCategories();
-		},
-	});
-	const categories = categoriesData?.data?.data?.categories;
 	return (
 		<nav className="w-full bg-primary h-[40px]">
 			<ul
@@ -37,14 +27,13 @@ const Navigation = () => {
 				</li>
 				{categories?.map((item, index) => (
 					<li key={index} className="">
-						<Link
-							className={` px-2 hover:bg-secondary  h-[40px] flex items-center justify-center text-white font-medium text-sm ${
-								category?.code === item?.code ? "bg-secondary " : "bg-primary"
-							}}`}
+						<NavLink
+							className=" px-2 hover:bg-secondary bg-primary h-[40px] flex items-center justify-center text-white font-medium text-sm"
 							to={slugify(item?.value.toLowerCase(), "-")}
+							style={navLinkStyle}
 						>
 							{item.value}
-						</Link>
+						</NavLink>
 					</li>
 				))}
 			</ul>

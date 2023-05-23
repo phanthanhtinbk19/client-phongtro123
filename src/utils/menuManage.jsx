@@ -1,4 +1,4 @@
-import {addPost, logout, managePost, savedPost, user, contact} from "../assets";
+import {addPost, managePost, savedPost, user, contact} from "../assets";
 
 const menuManage = [
 	{
@@ -25,12 +25,6 @@ const menuManage = [
 		title: "Liên hệ",
 		icon: contact,
 		path: "/lien-he",
-	},
-
-	{
-		title: "Đăng xuất",
-		icon: logout,
-		path: "/sign-up",
 	},
 ];
 export default menuManage;
