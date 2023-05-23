@@ -1,4 +1,4 @@
-import {Fragment, useState} from "react";
+import {Fragment, useEffect, useRef, useState} from "react";
 import {Button} from "../../components";
 import path from "../../constants/path";
 
@@ -10,10 +10,17 @@ import UpdatePost from "./UpdatePost";
 import ModalLayout from "../../layouts/ModalLayout";
 import ModalDelete from "../../components/Modal/ModalDelete";
 import useToggle from "../../hook/useToggle";
-const {BiEdit, FaTrash} = icons;
+import menuStatus from "../../utils/menuStatus";
+import {Link, createSearchParams} from "react-router-dom";
+import useQueryConfig from "../../hook/useQueryConfig";
+const {BiEdit, FaTrash, FaCaretDown} = icons;
 const ManagePost = () => {
+	const ref = useRef();
+	const queryConfig = useQueryConfig();
 	const {toggle: showModalDelete, setToggle: setShowModalDelete} = useToggle();
 	const {toggle: showModalUpdate, setToggle: setShowModalUpdate} = useToggle();
+	const {toggle: showMenu, setToggle: setShowMenu} = useToggle();
+
 	const [postId, setPostId] = useState("");
 
 	const {data: postsData} = useQuery({
@@ -26,29 +33,66 @@ const ManagePost = () => {
 
 	const checkedStatus = (dateString) => {
 		const momentDate = moment(new Date(), "HH:mm DD/MM/YYYY");
+
 		const mommentDate2 = moment(
 			dateString.split(",")[1].trim(),
 			"HH:mm DD/MM/YYYY"
 		);
 		return moment(momentDate).isSameOrAfter(mommentDate2);
 	};
-
+	useEffect(() => {
+		const checkIfClickedOutside = (e) => {
+			// @ts-ignore
+			if (ref.current && !ref.current.contains(e.target)) {
+				setShowMenu(false);
+			}
+		};
+		document.addEventListener("click", checkIfClickedOutside);
+		return () => {
+			document.removeEventListener("click", checkIfClickedOutside);
+		};
+	}, [setShowMenu, showMenu]);
 	return (
 		<>
 			<div>
 				<div className="flex justify-between items-center my-4">
 					<h2 className="text-2xl font-medium">Quản lý tin đăng</h2>
 					<div className="flex items-center gap-5 justify-center">
-						<select className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2">
-							<option value=" " disabled>
-								Lọc theo trạng thái
-							</option>
-							<option value="US">Tin đang hiển thị</option>
-							<option value="CA">Tin hết hạn</option>
-						</select>
-
+						<div className="relative" ref={ref}>
+							<Button
+								BeforeIcon={Fragment}
+								className="bg-gray-50 rounded-md border text-gray-600"
+								type="button"
+								AfterIcon={FaCaretDown}
+								onClick={() => setShowMenu(!showMenu)}
+							>
+								<span> Lọc theo trạng thái </span>
+							</Button>
+							{showMenu && (
+								<ul className="w-full rounded-md shadow-md  absolute top-12 bg-white z-10 left-0 border">
+									{menuStatus?.map((item, index) => (
+										<li key={index} className="hover:bg-gray-100 w-full">
+											<Link
+												className="py-2 px-5 inline-block  "
+												to={{
+													pathname: location.pathname,
+													search: createSearchParams({
+														...queryConfig,
+														status: item.value,
+													}).toString(),
+												}}
+												title="Đăng tin cho thuê"
+												onClick={() => setShowMenu(false)}
+											>
+												<span>{item.title}</span>
+											</Link>
+										</li>
+									))}
+								</ul>
+							)}
+						</div>
 						<Button
-							to={path.CREATE_POST}
+							to={`/${path.SYSTEM}/${path.CREATE_POST}`}
 							BeforeIcon={Fragment}
 							type="button"
 							AfterIcon={Fragment}

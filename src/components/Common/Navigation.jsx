@@ -8,6 +8,7 @@ const navLinkStyle = ({isActive}) => ({
 });
 const Navigation = () => {
 	const {categories} = useApp();
+
 	const location = useLocation();
 	return (
 		<nav className="w-full bg-primary h-[40px]">

@@ -32,6 +32,10 @@
 		border-color: #e13427;
 		color: #fff;
 	}
+	& .previous.disabled a {
+		background-color: #f1f1f1;
+		cursor: not-allowed;
+	}
 }
 
 .swiper-button-prev {

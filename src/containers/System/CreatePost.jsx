@@ -26,6 +26,7 @@ const CreatePost = () => {
 		handleSubmit,
 		control,
 		setValue,
+		reset,
 		getValues,
 		watch,
 		formState: {errors},
@@ -151,6 +152,8 @@ const CreatePost = () => {
 		createNewPostMutation.mutate(newData, {
 			onSuccess: () => {
 				toast.success("Đăng tin thành công");
+				reset();
+				setImagesPreview([]);
 			},
 		});
 	});

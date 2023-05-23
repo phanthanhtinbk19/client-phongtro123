@@ -11,7 +11,7 @@ import slugify from "slugify";
 
 const SearchDetail = () => {
 	const location = useLocation();
-
+	console.log(location?.state?.category?.categoryCode);
 	return (
 		<div className="container mx-auto">
 			<div className="flex items-center gap-1 py-2 font-medium">

@@ -29,8 +29,9 @@ import {MdOutlineLibraryBooks} from "react-icons/md";
 import {RxDashboard} from "react-icons/rx";
 import {ImBin} from "react-icons/im";
 import {FcContacts, FcFullTrash} from "react-icons/fc";
-import {FaTrash} from "react-icons/fa";
+import {FaTrash, FaCaretDown} from "react-icons/fa";
 const icons = {
+	FaCaretDown,
 	FaTrash,
 	BiEdit,
 	FcFullTrash,

@@ -9,7 +9,7 @@ import {
 	useLocation,
 	useParams,
 } from "react-router-dom";
-import {isUndefined, omitBy} from "lodash";
+import _, {isUndefined, omit, omitBy} from "lodash";
 import path from "../../constants/path";
 import {Modal} from "../../components";
 import slugify from "slugify";
@@ -27,6 +27,7 @@ const {
 const SearchHeader = () => {
 	const {category} = useParams();
 	const queryConfig = useQueryConfig();
+	const [newCategories, setNewCategories] = useState([]);
 	const {prices, categories, areas, provinces, queries, setQueries} = useApp();
 	const location = useLocation();
 	const [isModalOpen, setIsModalOpen] = useState(false);
@@ -36,6 +37,25 @@ const SearchHeader = () => {
 	const categoryItem = categories?.find(
 		(item) => slugify(item?.value.toLowerCase(), "-") === category
 	);
+
+	useEffect(() => {
+		const isObjectExists = _.find(newCategories, {
+			id: 0,
+		});
+		const isProvinceExists = _.find(provinces, {
+			code: "ALL",
+		});
+		categories?.length > 0 &&
+			!isObjectExists &&
+			setNewCategories([
+				{id: 0, code: "ALL", value: "Tất cả danh mục"},
+				...categories,
+			]);
+
+		provinces?.length > 0 &&
+			!isProvinceExists &&
+			provinces.unshift({code: "ALL", value: "Toàn quốc"});
+	}, [categories, newCategories, provinces]);
 
 	const handleShowModal = (content, name) => {
 		setContent(content);
@@ -47,7 +67,7 @@ const SearchHeader = () => {
 		setQueries({...queries, [name]: query});
 		setIsModalOpen(false);
 	};
-
+	// console.log(categories);
 	useEffect(() => {
 		if (!location?.pathname.includes(path.SEARCH)) {
 			setQueries({});
@@ -75,7 +95,7 @@ const SearchHeader = () => {
 						AfterIcon={RiDeleteBack2Line}
 						name="category"
 						setQueries={setQueries}
-						onClick={() => handleShowModal(categories, "category")}
+						onClick={() => handleShowModal(newCategories, "category")}
 					/>
 					<ItemSearch
 						defaultText="Toàn quốc"
@@ -110,16 +130,28 @@ const SearchHeader = () => {
 								queries["category"]?.name?.toLowerCase() || ""
 							)}`,
 							search: createSearchParams(
-								omitBy(
-									{
-										...queryConfig,
-										provinceCode: queries["province"]?.provinceCode,
-										priceTo: queries["price"]?.priceNumber[0],
-										priceFrom: queries["price"]?.priceNumber[1],
-										areaTo: queries["area"]?.areaNumber[0],
-										areaFrom: queries["area"]?.areaNumber[1],
-									},
-									isUndefined
+								omit(
+									omitBy(
+										{
+											...queryConfig,
+											provinceCode:
+												queries["province"]?.provinceCode === "ALL"
+													? undefined
+													: queries["province"]?.provinceCode,
+											priceTo: queries["price"]?.priceNumber[0],
+											priceFrom:
+												queries["price"]?.priceNumber[0] === 15
+													? undefined
+													: queries["price"]?.priceNumber[1],
+											areaTo: queries["area"]?.areaNumber[0],
+											areaFrom:
+												queries["area"]?.areaNumber[0] === 90
+													? undefined
+													: queries["area"]?.areaNumber[1],
+										},
+										isUndefined
+									),
+									["page"]
 								)
 							).toString(),
 						}}

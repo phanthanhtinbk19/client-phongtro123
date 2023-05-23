@@ -7,14 +7,14 @@ import {
 	createSearchParams,
 	useLocation,
 	useNavigate,
-	useParams,
 } from "react-router-dom";
 import SearchHeader from "../../containers/Public/SearchHeader";
-import {Fragment, useEffect, useRef, useState} from "react";
+import {Fragment, useEffect, useRef} from "react";
 import menuManage from "../../utils/menuManage";
 import {useAuthentication} from "../../contexts/authContext";
 import {authApi} from "../../api";
 import {useMutation} from "@tanstack/react-query";
+import useToggle from "../../hook/useToggle";
 
 const {
 	AiOutlineHeart,
@@ -28,7 +28,7 @@ const Header = () => {
 	const location = useLocation();
 	const navigate = useNavigate();
 	const ref = useRef();
-	const [showMenu, setShowMenu] = useState(false);
+	const {toggle: showMenu, setToggle: setShowMenu} = useToggle();
 	const {isAuthenticated, setIsAuthenticated} = useAuthentication();
 	const logoutAccountMutation = useMutation({
 		mutationFn: () => authApi.logoutAccount(),
@@ -53,7 +53,7 @@ const Header = () => {
 		return () => {
 			document.removeEventListener("click", checkIfClickedOutside);
 		};
-	}, [showMenu]);
+	}, [setShowMenu, showMenu]);
 
 	return (
 		<div className="">
@@ -108,6 +108,7 @@ const Header = () => {
 												rel="nofollow"
 												to={item.path}
 												title="Đăng tin cho thuê"
+												onClick={() => setShowMenu(false)}
 											>
 												<span>
 													<img

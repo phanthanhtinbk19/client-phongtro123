@@ -1,12 +1,13 @@
 import ReactPaginate from "react-paginate";
-import {createSearchParams, useNavigate} from "react-router-dom";
-import path from "../../constants/path";
+import {createSearchParams, useLocation, useNavigate} from "react-router-dom";
 
 function Pagination({totalPage, queryConfig}) {
+	const location = useLocation();
+
 	const navigate = useNavigate();
 	const handlePageClick = (event) => {
 		navigate({
-			pathname: path.home,
+			pathname: location.pathname,
 			search: createSearchParams({
 				...queryConfig,
 				page: (event.selected + 1).toString(),

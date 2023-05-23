@@ -6,7 +6,7 @@ const getCodeArrPrice = (prices, arr) => {
 			rangePrice: getRangePrice(getNumbersPrice(item?.value)),
 		};
 	});
-
+	console.log(arr);
 	const result = codePrices?.find((item) => {
 		return JSON.stringify(item?.rangePrice) === JSON.stringify(arr);
 	});
@@ -34,7 +34,20 @@ const getRangePrice = (data) => {
 		return data;
 	}
 };
+const getCodeArrArea = (Areas, arr) => {
+	const codeAreas = Areas?.map((item) => {
+		return {
+			...item,
+			rangeArea: getRangeArea(getNumbersArea(item?.value)),
+		};
+	});
 
+	const result = codeAreas?.find((item) => {
+		return JSON.stringify(item?.rangeArea) === JSON.stringify(arr);
+	});
+
+	return result;
+};
 const getCodeArea = (areas, value) => {
 	const codeAreas = areas?.map((item) => {
 		return {
@@ -58,4 +71,4 @@ const getRangeArea = (data) => {
 	}
 };
 
-export {getCodePrice, getCodeArea, getCodeArrPrice};
+export {getCodePrice, getCodeArea, getCodeArrPrice, getCodeArrArea};

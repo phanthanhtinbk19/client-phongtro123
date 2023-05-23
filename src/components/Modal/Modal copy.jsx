@@ -9,7 +9,7 @@ import {
 	getNumbersPrice,
 } from "../../utils/common";
 import icons from "../../constants/icon";
-import {getCodeArrArea, getCodeArrPrice} from "../../utils/getCodes";
+import {getCodeArrPrice} from "../../utils/getCodes";
 const {BsArrowLeft} = icons;
 const Modal = ({
 	content,
@@ -48,16 +48,10 @@ const Modal = ({
 	useEffect(() => {
 		let min = persent1 <= persent2 ? persent1 : persent2;
 		let max = persent1 <= persent2 ? persent2 : persent1;
-		const code =
-			name === "price"
-				? getCodeArrPrice(content, [
-						convert100toTarget(min, name),
-						max === 100 ? 999999 : convert100toTarget(max, name),
-				  ])?.code
-				: getCodeArrArea(content, [
-						convert100toTarget(min, name),
-						max === 100 ? 999999 : convert100toTarget(max, name),
-				  ])?.code;
+		const code = getCodeArrPrice(content, [
+			convert100toTarget(min, name),
+			convert100toTarget(max, name),
+		])?.code;
 
 		setActivedEl(code || "");
 
@@ -112,22 +106,18 @@ const Modal = ({
 	const handleBeforeSubmit = () => {
 		let min = persent1 <= persent2 ? persent1 : persent2;
 		let max = persent1 <= persent2 ? persent2 : persent1;
-
 		let arrMinMax = [
 			convert100toTarget(min, name),
 			convert100toTarget(max, name),
 		];
 		handleSubmit({
 			[`${name}Number`]: arrMinMax,
-			[`${name}Code`]:
-				persent1 === 100 && persent2 === 100
-					? `Trên ${convert100toTarget(persent1, name)} ${
-							name === "price" ? "triệu" : "m2"
-					  } +`
-					: `Từ ${convert100toTarget(min, name)} - ${convert100toTarget(
-							max,
-							name
-					  )} ${name === "price" ? "triệu" : "m2"}`,
+			[`${name}Code`]: `Từ ${convert100toTarget(
+				min,
+				name
+			)} - ${convert100toTarget(max, name)} ${
+				name === "price" ? "triệu" : "m2"
+			}`,
 		});
 	};
 
@@ -159,6 +149,24 @@ const Modal = ({
 					</div>
 					{(name === "category" || name === "province") && (
 						<div className="px-10">
+							<div className="flex items-center py-4 border-b">
+								<input
+									id="default-radio-1"
+									type="radio"
+									value="all"
+									name="default-radio"
+									className="w-4 h-4 text-blue-600 "
+									checked={!queries[name]?.[`${name}Code`]}
+									onChange={() => {}}
+								/>
+								<label
+									htmlFor="default-radio-1"
+									className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+								>
+									{name === "category" ? "Tất cả danh mục" : "Toàn quốc"}
+								</label>
+							</div>
+
 							{content?.map((item, index) => (
 								<div key={index} className="flex items-center py-4 border-b">
 									<input
@@ -166,10 +174,7 @@ const Modal = ({
 										type="radio"
 										value={item.code}
 										name="default-radio"
-										checked={
-											queries[name]?.[`${name}Code`] === item.code ||
-											(index === 0 && !queries[name]?.[`${name}Code`])
-										}
+										checked={queries[name]?.[`${name}Code`] === item.code}
 										className="w-4 h-4 text-blue-600 "
 										onChange={() =>
 											handleSubmit({
@@ -279,9 +284,7 @@ const Modal = ({
 														: " text-gray-900 focus:outline-none bg-gray-50  border border-gray-200 hover:bg-gray-100 hover:text-blue-700  "
 												}`}
 											>
-												{name === "price"
-													? item.value
-													: `${item?.value?.replaceAll("m", "")} m2`}
+												{name === "price" ? item.value : item.value}
 											</button>
 										);
 									})}

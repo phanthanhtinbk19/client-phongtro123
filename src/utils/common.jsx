@@ -105,6 +105,7 @@ const isValidJSON = (jsonString) => {
 		return false;
 	}
 };
+
 export {
 	isValidJSON,
 	extractLocation,

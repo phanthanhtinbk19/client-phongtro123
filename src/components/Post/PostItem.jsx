@@ -23,7 +23,7 @@ const PostItem = ({post}) => {
 					<div className="absolute bottom-2  w-full">
 						<div className="flex justify-between items-center relative px-2">
 							<span className="text-sm font-medium text-white inline-block px-2 py-1 bg-black/50 rounded-md ">
-								12 ảnh
+								{`${JSON.parse(post?.images?.image).length} ảnh`}
 							</span>
 							<span
 								className="text-sm font-medium text-white inline-block px-2 py-1 bg-black/50 rounded-md "
@@ -45,7 +45,7 @@ const PostItem = ({post}) => {
 							className="line-clamp-2 text-lg font-bold text-secondary"
 						>
 							<span className="inline-flex pr-1 text-yellow-400">
-								{new Array(+post?.star).fill(0).map((item, index) => {
+								{new Array(+post?.star || 0).fill(0).map((item, index) => {
 									return <AiFillStar key={index} size={15} />;
 								})}
 							</span>
